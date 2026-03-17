@@ -18,7 +18,7 @@ from pathlib import Path
 from vibium.sync_api.page import Page
 from vibium.sync_api.element import Element
 
-from jatefr.utils.config.config_reader import ConfigReader
+from pytaf.utils.config.config_reader import ConfigReader
 
 logger = logging.getLogger(__name__)
 

@@ -14,8 +14,9 @@ import time
 
 from vibium.sync_api.page import Page
 
-from jatefr.core.base_page import BasePage
-from jatefr.utils.config.config_reader import ConfigReader
+from pytaf.core.base_page import BasePage
+from pytaf.utils.config.config_reader import ConfigReader
+from pytaf.utils.credentials.credential_store import CredentialStore
 
 logger = logging.getLogger(__name__)
 
@@ -58,13 +59,4 @@ class LoginPOM(BasePage):
             logger.warning("Logout element not found or failed: %s", exc)
 
     def _resolve_credentials(self, alias: str) -> tuple[str, str]:
-        import os
-        env_key = alias.upper().replace("-", "_").replace(" ", "_")
-        username = os.environ.get(f"{env_key}_USERNAME", "")
-        password = os.environ.get(f"{env_key}_PASSWORD", "")
-        if not username or not password:
-            raise RuntimeError(
-                f"No credentials found for alias '{alias}'. "
-                f"Set {env_key}_USERNAME and {env_key}_PASSWORD environment variables."
-            )
-        return username, password
+        return CredentialStore.get(alias)

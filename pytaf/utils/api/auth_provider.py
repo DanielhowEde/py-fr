@@ -17,7 +17,7 @@ from typing import Protocol
 
 import requests
 
-from jatefr.utils.api.api_registry import ApiCfg, AuthCfg
+from pytaf.utils.api.api_registry import ApiCfg, AuthCfg
 
 logger = logging.getLogger(__name__)
 

@@ -2,7 +2,7 @@
 ConfigReader - reads config.properties from the project root or classpath.
 
 Usage:
-    from jatefr.utils.config.config_reader import ConfigReader
+    from pytaf.utils.config.config_reader import ConfigReader
 
     base_url = ConfigReader.get("base.url")
     timeout  = ConfigReader.get_int("timeout", 10)

@@ -6,8 +6,8 @@ Uses context.page (Vibium Page) set by features/environment.py before_scenario.
 
 from behave import given, when, then
 
-from jatefr.common.pages.login_pom import LoginPOM
-from jatefr.common.pages.navigation_pom import NavigationPOM
+from pytaf.common.pages.login_pom import LoginPOM
+from pytaf.common.pages.navigation_pom import NavigationPOM
 
 
 def _login_page(context) -> LoginPOM:

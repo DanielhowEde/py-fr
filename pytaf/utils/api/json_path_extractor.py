@@ -18,7 +18,7 @@ from typing import Any
 
 from jsonpath_ng import parse as jp_parse
 
-from jatefr.utils.api.multi_api_client import ApiResponse
+from pytaf.utils.api.multi_api_client import ApiResponse
 
 
 def extract(response: ApiResponse, expr: str) -> Any:

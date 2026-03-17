@@ -1,5 +1,5 @@
 """
-Behave environment hooks — lifecycle management for jatefr (Vibium edition).
+Behave environment hooks — lifecycle management for pytaf (Vibium edition).
 
 Browser lifecycle:
   before_all    → start Vibium browser, create report directory
@@ -25,19 +25,22 @@ from datetime import datetime
 from pathlib import Path
 
 import allure
+from dotenv import load_dotenv
 from vibium import browser as vib_browser
 
-from jatefr.core.browser_manager import BrowserManager
-from jatefr.utils.config.config_reader import ConfigReader
-from jatefr.utils.context.scenario_context import ScenarioContext
-from jatefr.utils.api import evidence_writer
-from jatefr.core.base_page import reset_screenshot_counter
+load_dotenv()  # loads .env from project root (or nearest parent) into os.environ
+
+from pytaf.core.browser_manager import BrowserManager
+from pytaf.utils.config.config_reader import ConfigReader
+from pytaf.utils.context.scenario_context import ScenarioContext
+from pytaf.utils.api import evidence_writer
+from pytaf.core.base_page import reset_screenshot_counter
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logger = logging.getLogger("jatefr.environment")
+logger = logging.getLogger("pytaf.environment")
 
 
 # ------------------------------------------------------------------
@@ -45,7 +48,7 @@ logger = logging.getLogger("jatefr.environment")
 # ------------------------------------------------------------------
 
 def before_all(context):
-    report_name = ConfigReader.get("report.name", "jatefr")
+    report_name = ConfigReader.get("report.name", "pytaf")
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     report_dir = os.path.join("..", "test-reports", f"{report_name}_{timestamp}")
     Path(report_dir).mkdir(parents=True, exist_ok=True)
@@ -78,10 +81,16 @@ def before_scenario(context, scenario):
     # Set viewport to 1920×1080
     context.page.set_viewport({"width": 1920, "height": 1080})
 
-    # @Data_ tag support (mirrors Java @Data_ spreadsheet logic)
+    # Spreadsheet tag support
+    # @test_<name>     → run rows where test == <name>
+    # @testfile_<name> → run all tests in <name>.xlsx
     for tag in scenario.tags:
-        if tag.startswith("Data_"):
+        if tag.startswith("testfile_"):
+            context.scenario_ctx.set("spreadsheet_tag", tag[9:])
+            context.scenario_ctx.set("spreadsheet_mode", "all")
+        elif tag.startswith("test_"):
             context.scenario_ctx.set("spreadsheet_tag", tag[5:])
+            context.scenario_ctx.set("spreadsheet_mode", "test")
 
     logger.info(">>> Scenario: %s", scenario.name)
 
@@ -143,7 +152,7 @@ def _attempt_logout(context) -> None:
     if not logout_sel:
         return
     try:
-        from jatefr.common.pages.login_pom import LoginPOM
+        from pytaf.common.pages.login_pom import LoginPOM
         LoginPOM(context.page).log_out()
     except Exception as exc:
         logger.warning("Logout attempt failed: %s", exc)

@@ -19,11 +19,11 @@ Steps defined here (mirrors MultiApiSteps.java):
 
 from behave import given, when, then, step
 
-from jatefr.utils.api.api_registry import ApiRegistry
-from jatefr.utils.api.auth_provider import from_cfg
-from jatefr.utils.api.multi_api_client import MultiApiClient
-from jatefr.utils.api import template_loader, conditional_templater, evidence_writer
-from jatefr.utils.api.json_path_extractor import extract
+from pytaf.utils.api.api_registry import ApiRegistry
+from pytaf.utils.api.auth_provider import from_cfg
+from pytaf.utils.api.multi_api_client import MultiApiClient
+from pytaf.utils.api import template_loader, conditional_templater, evidence_writer
+from pytaf.utils.api.json_path_extractor import extract
 
 
 # ------------------------------------------------------------------

@@ -18,7 +18,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from jatefr.utils.api import conditional_templater, date_function_templater
+from pytaf.utils.api import conditional_templater, date_function_templater
 
 _VAR = re.compile(r"\$\{([a-zA-Z0-9_.:-]+)\}")
 _RAW_VAR = re.compile(r"\$\{\{([a-zA-Z0-9_.:-]+)\}\}")

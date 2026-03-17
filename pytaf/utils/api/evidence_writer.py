@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from jatefr.utils.api.multi_api_client import ApiResponse
+    from pytaf.utils.api.multi_api_client import ApiResponse
 
 logger = logging.getLogger(__name__)
 

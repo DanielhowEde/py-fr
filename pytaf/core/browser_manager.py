@@ -4,7 +4,7 @@ BrowserManager - singleton Vibium browser lifecycle manager.
 Replaces driver_manager.py (Selenium) with Vibium.
 
 Usage:
-    from jatefr.core.browser_manager import BrowserManager
+    from pytaf.core.browser_manager import BrowserManager
 
     bro  = BrowserManager.get_browser()
     page = BrowserManager.get_page()
@@ -18,7 +18,7 @@ from vibium import browser as vib_browser
 from vibium.sync_api.browser import Browser
 from vibium.sync_api.page import Page
 
-from jatefr.utils.config.config_reader import ConfigReader
+from pytaf.utils.config.config_reader import ConfigReader
 
 logger = logging.getLogger(__name__)
 

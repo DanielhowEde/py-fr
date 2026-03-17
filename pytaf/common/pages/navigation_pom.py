@@ -6,8 +6,8 @@ import logging
 
 from vibium.sync_api.page import Page
 
-from jatefr.core.base_page import BasePage
-from jatefr.utils.config.config_reader import ConfigReader
+from pytaf.core.base_page import BasePage
+from pytaf.utils.config.config_reader import ConfigReader
 
 logger = logging.getLogger(__name__)
 

@@ -12,8 +12,8 @@ from typing import Any
 import requests
 import urllib3
 
-from jatefr.utils.config.config_reader import ConfigReader
-from jatefr.utils.api.auth_provider import AuthProvider
+from pytaf.utils.config.config_reader import ConfigReader
+from pytaf.utils.api.auth_provider import AuthProvider
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
