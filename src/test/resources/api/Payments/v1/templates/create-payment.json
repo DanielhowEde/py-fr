@@ -1,0 +1,11 @@
+{
+  "id": "${id}",
+  "amount": ${amount},
+  "currency": "${currency:GBP}",
+  "description": "${description:Payment}",
+  "createdAt": "{date(now),yyyy-MM-dd}",
+  {#if betaUser}
+  "features": ["core", "beta-mode"],
+  {#/if}
+  "expiresOn": "{date(expiry|in=dd/MM/yyyy|out=yyyy-MM-dd)}"
+}

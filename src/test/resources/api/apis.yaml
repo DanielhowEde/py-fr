@@ -1,0 +1,36 @@
+envs:
+  dev:
+    Payments:
+      baseUrl: https://dev.payments.example.com
+      auth:
+        type: oauth2_client_credentials
+        tokenUrl: https://dev.auth.example.com/oauth/token
+        clientId: ${PAY_CLIENT_ID}
+        clientSecret: ${PAY_CLIENT_SECRET}
+        scope: payments.write
+      defaultHeaders:
+        Accept: application/json
+
+    Identity:
+      baseUrl: https://dev.identity.example.com
+      auth:
+        type: api_key
+        header: X-API-Key
+        value: ${ID_API_KEY}
+
+  qa:
+    Payments:
+      baseUrl: https://qa.payments.example.com
+      auth:
+        type: oauth2_client_credentials
+        tokenUrl: https://qa.auth.example.com/oauth/token
+        clientId: ${PAY_CLIENT_ID}
+        clientSecret: ${PAY_CLIENT_SECRET}
+        scope: payments.write
+      defaultHeaders:
+        Accept: application/json
+
+    Identity:
+      baseUrl: https://qa.identity.example.com
+      auth:
+        type: none

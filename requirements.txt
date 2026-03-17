@@ -1,0 +1,27 @@
+# BDD test runner
+behave>=1.2.6
+
+# Reporting — Allure
+allure-behave>=2.13.2
+
+# Browser automation — Vibium (replaces Selenium)
+vibium>=26.3.0
+
+# HTTP API testing
+requests>=2.32.0
+urllib3>=2.2.0
+
+# YAML parsing (apis.yaml)
+PyYAML>=6.0
+
+# JSONPath extraction
+jsonpath-ng>=1.6.1
+
+# Date utilities
+python-dateutil>=2.9.0
+
+# Environment variable loading (.env support)
+python-dotenv>=1.0.0
+
+# Excel (optional — for @Data_ spreadsheet tag support)
+openpyxl>=3.1.2
