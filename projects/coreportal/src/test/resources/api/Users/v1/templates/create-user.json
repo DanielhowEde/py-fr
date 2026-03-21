@@ -1,0 +1,5 @@
+{
+  "email": "${email}",
+  "display_name": "${display_name}",
+  "role_id": "${role_id}"
+}

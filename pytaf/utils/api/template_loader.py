@@ -1,7 +1,7 @@
 """
 TemplateLoader - load and render JSON templates with variable substitution.
 
-Placeholder syntax (mirrors Java version):
+Placeholder syntax:
     ${var}              — replace with value from vars dict (raises if missing)
     ${var:default}      — replace with default if var absent
     ${{var}}            — raw insert (no JSON-quoting); inserts null if missing

@@ -1,7 +1,7 @@
 """
 AuthProvider - pluggable authentication strategies for the API client.
 
-Supported types (mirrors AuthProvider.java + OAuth2ClientCredentialsProvider.java):
+Supported types:
     none                        — no auth
     api_key                     — static header: value
     oauth2_client_credentials   — fetches a Bearer token via client-credentials flow,
@@ -64,7 +64,7 @@ class OAuth2ClientCredentials:
             self._token_url,
             auth=(self._client_id, self._client_secret),
             data={"grant_type": "client_credentials", "scope": self._scope},
-            verify=False,  # mirrors Java's relaxedHTTPSValidation on token endpoint
+            verify=False,  # relaxed HTTPS validation on token endpoint
         )
         if resp.status_code >= 300:
             raise RuntimeError(f"OAuth token request failed with HTTP {resp.status_code}")

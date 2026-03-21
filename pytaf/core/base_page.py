@@ -2,8 +2,8 @@
 BasePage - UI interaction helpers built on Vibium.
 
 Replaces the Selenium-based implementation with Vibium's Page/Element API.
-All methods preserve the same names as the Java original so existing Gherkin
-step definitions continue to work without changes.
+All methods use consistent naming so existing Gherkin step definitions
+continue to work without changes.
 
 Locator rules (same convention as before):
     Strings starting with // or (//  → XPath  → page.find(xpath=locator)

@@ -1,7 +1,7 @@
 # pytaf — Python Test Automation Framework
 
 BDD test automation framework for UI and API testing, built on [Behave](https://behave.readthedocs.io/), [Allure](https://allurereport.org/), and [Vibium](https://vibium.dev/).
-Python port of the Java `jate-fr` framework — existing Gherkin steps work without changes.
+Existing Gherkin steps work without changes.
 
 ---
 
@@ -85,18 +85,36 @@ allure serve allure-results
 ## Project Structure
 
 ```
-├── config.properties          # Runtime configuration
-├── behave.ini                 # Behave settings and formatter config
+├── config.properties          # Runtime configuration (single-project mode)
+├── behave.ini                 # Behave settings (single-project mode)
 ├── requirements.txt
-├── features/
-│   ├── environment.py         # Browser lifecycle hooks (before/after scenario)
+├── features/                  # Default features (single-project mode)
+│   ├── environment.py         # Delegates to pytaf.core.environment_hooks
 │   ├── steps/
 │   │   └── __init__.py        # Imports pytaf shared steps automatically
 │   └── *.feature              # Your Gherkin feature files
-└── pytaf/                     # Framework library
+├── projects/                  # Multi-application project folders
+│   └── <app-name>/
+│       ├── config.properties  # App-specific configuration
+│       ├── behave.ini         # App-specific Behave settings
+│       ├── .env               # App-specific secrets (git-ignored)
+│       ├── credentials.enc    # App-specific encrypted credentials
+│       ├── features/
+│       │   ├── environment.py
+│       │   ├── steps/
+│       │   │   └── __init__.py
+│       │   └── *.feature
+│       └── src/test/resources/
+│           ├── data/          # Excel spreadsheets
+│           └── api/           # apis.yaml + templates
+├── scripts/
+│   ├── run_project.py         # Convenience runner for multi-app mode
+│   └── manage_credentials.py  # Credential store management
+└── pytaf/                     # Framework library (shared by all projects)
     ├── core/
-    │   ├── base_page.py       # UI helper methods (click, fill, wait, etc.)
-    │   └── browser_manager.py # Singleton Vibium browser lifecycle
+    │   ├── base_page.py           # UI helper methods (click, fill, wait, etc.)
+    │   ├── browser_manager.py     # Singleton Vibium browser lifecycle
+    │   └── environment_hooks.py   # Reusable Behave hooks
     ├── common/
     │   ├── pages/
     │   │   ├── login_pom.py       # Login page object
@@ -114,8 +132,10 @@ allure serve allure-results
         │   └── evidence_writer.py     # Saves request/response artifacts to disk
         ├── config/
         │   └── config_reader.py       # Reads config.properties
-        └── context/
-            └── scenario_context.py    # Thread-safe per-scenario data store
+        ├── context/
+        │   └── scenario_context.py    # Thread-safe per-scenario data store
+        └── credentials/
+            └── credential_store.py    # Encrypted credential management
 ```
 
 ---
@@ -715,3 +735,155 @@ def step_see_text(context, text):
     page_text = context.page.content()
     assert text in page_text, f"'{text}' not found on page"
 ```
+
+---
+
+## Multi-Application Setup
+
+pytaf supports testing multiple applications from a single repository. Each application gets its own folder under `projects/` with independent configuration, features, and resources.
+
+---
+
+### Single-project mode vs multi-project mode
+
+| Mode | How it works |
+|------|-------------|
+| **Single-project** | Run `behave` from the repo root. Uses root-level `config.properties`, `behave.ini`, and `features/`. |
+| **Multi-project** | Each app lives in `projects/<app-name>/`. Run via the runner script or `cd` into the project folder. |
+
+Both modes use the same `pytaf/` framework library and shared step definitions.
+
+---
+
+### Creating a new project
+
+```bash
+# Copy the example template
+cp -r projects/example projects/myapp
+
+# Edit the app-specific config
+# projects/myapp/config.properties
+```
+
+Each project folder is self-contained:
+
+```
+projects/myapp/
+├── config.properties       # App-specific settings (base.url, locators, etc.)
+├── behave.ini              # Behave formatter and output settings
+├── .env                    # Secrets — PYTAF_CREDENTIAL_KEY, etc. (git-ignored)
+├── credentials.enc         # Encrypted credentials for this app
+├── features/
+│   ├── environment.py      # Adds framework root to sys.path, imports hooks
+│   ├── steps/
+│   │   ├── __init__.py     # Imports pytaf shared steps
+│   │   └── my_steps.py     # App-specific step definitions
+│   ├── login.feature
+│   └── checkout.feature
+└── src/test/resources/
+    ├── data/               # Excel spreadsheets
+    │   └── login.xlsx
+    └── api/                # apis.yaml + JSON templates
+        ├── apis.yaml
+        └── Payments/v1/templates/
+            └── create-payment.json
+```
+
+---
+
+### Project environment.py
+
+Each project's `features/environment.py` adds the framework root to `sys.path` and re-exports the shared hooks:
+
+```python
+import sys
+from pathlib import Path
+
+# Framework root is 3 levels up: projects/<app>/features/environment.py → repo root
+_FRAMEWORK_ROOT = Path(__file__).resolve().parents[3]
+if str(_FRAMEWORK_ROOT) not in sys.path:
+    sys.path.insert(0, str(_FRAMEWORK_ROOT))
+
+from pytaf.core.environment_hooks import (  # noqa: F401
+    before_all, after_all,
+    before_scenario, after_scenario,
+    after_step,
+)
+```
+
+To add project-specific hooks (e.g. custom `before_scenario` logic), wrap the shared hook:
+
+```python
+from pytaf.core.environment_hooks import (
+    before_all, after_all, after_step,                          # noqa: F401
+    before_scenario as _base_before_scenario,
+    after_scenario as _base_after_scenario,
+)
+
+def before_scenario(context, scenario):
+    _base_before_scenario(context, scenario)
+    # your custom setup here
+    context.scenario_ctx.set("app_name", "myapp")
+
+def after_scenario(context, scenario):
+    # your custom teardown here
+    _base_after_scenario(context, scenario)
+```
+
+---
+
+### Running a project
+
+**Option 1 — runner script** (recommended)
+
+```bash
+# From the repo root
+python scripts/run_project.py myapp
+python scripts/run_project.py myapp --tags=@smoke
+python scripts/run_project.py myapp -f pretty
+
+# List available projects
+python scripts/run_project.py
+```
+
+**Option 2 — cd into the project**
+
+```bash
+cd projects/myapp
+PYTHONPATH=../.. behave
+PYTHONPATH=../.. behave --tags=@regression
+```
+
+**Option 3 — single-project mode** (unchanged)
+
+```bash
+# From the repo root, uses root-level config.properties and features/
+behave
+```
+
+---
+
+### Per-project configuration
+
+Each project has its own `config.properties` with settings for that application:
+
+```properties
+# projects/myapp/config.properties
+base.url=https://myapp.staging.example.com
+report.name=myapp
+report.title=MyApp Regression
+login.username.selector=#email
+login.password.selector=#password
+login.button.selector=button[type='submit']
+```
+
+```properties
+# projects/admin-portal/config.properties
+base.url=https://admin.staging.example.com
+report.name=admin
+report.title=Admin Portal
+login.username.selector=[name='user']
+login.password.selector=[name='pass']
+```
+
+Environment variables still override config keys in any mode. Each project can also have its own `.env` file for secrets.

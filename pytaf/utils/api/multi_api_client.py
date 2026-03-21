@@ -1,5 +1,5 @@
 """
-MultiApiClient - thin HTTP client backed by requests, mirroring MultiApiClient.java.
+MultiApiClient - thin HTTP client backed by requests.
 
 Each instance is bound to a single API's base URL and auth provider.
 """

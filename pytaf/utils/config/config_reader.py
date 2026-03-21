@@ -1,5 +1,9 @@
 """
-ConfigReader - reads config.properties from the project root or classpath.
+ConfigReader - reads config.properties from the project root.
+
+Supports multi-project setups: call ``set_project_root(path)`` before first
+access to load config from a specific project directory.  If no root is set,
+the reader searches from cwd upward (backward-compatible single-project mode).
 
 Usage:
     from pytaf.utils.config.config_reader import ConfigReader
@@ -18,14 +22,29 @@ class ConfigReader:
     _props: dict[str, str] = {}
     _lock = threading.Lock()
     _loaded = False
+    _project_root: Path | None = None
+
+    @classmethod
+    def set_project_root(cls, root: Path | str) -> None:
+        """Set the project root directory.  Forces a config reload."""
+        with cls._lock:
+            cls._project_root = Path(root).resolve()
+            cls._props = {}
+            cls._loaded = False
+
+    @classmethod
+    def get_project_root(cls) -> Path:
+        """Return the project root (explicit or cwd)."""
+        return cls._project_root or Path.cwd()
 
     @classmethod
     def _load(cls) -> None:
         with cls._lock:
             if cls._loaded:
                 return
-            # Search for config.properties: cwd, then parents up to 3 levels
-            search_dirs = [Path.cwd()] + list(Path.cwd().parents)[:3]
+            root = cls._project_root or Path.cwd()
+            # Search for config.properties: project root, then parents up to 3 levels
+            search_dirs = [root] + list(root.parents)[:3]
             for base in search_dirs:
                 candidate = base / "config.properties"
                 if candidate.exists():

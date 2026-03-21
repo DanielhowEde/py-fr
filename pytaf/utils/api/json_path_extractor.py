@@ -1,7 +1,7 @@
 """
 JsonPathExtractor - extract values from JSON responses using JSONPath expressions.
 
-Expression syntax (mirrors JsonPathExtractor.java):
+Expression syntax:
     id                  — simple key (top-level or dot-path)
     items[0].id         — nested path
     expr|first          — take first element of a list

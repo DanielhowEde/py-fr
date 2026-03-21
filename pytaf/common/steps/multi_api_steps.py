@@ -1,7 +1,7 @@
 """
 Multi-API step definitions — Gherkin steps for calling REST APIs.
 
-Steps defined here (mirrors MultiApiSteps.java):
+Steps defined here:
 
     Given I use the "<ApiName>" API in "<env>" environment
     And   I prepare "<templateName>" template for this API with:
