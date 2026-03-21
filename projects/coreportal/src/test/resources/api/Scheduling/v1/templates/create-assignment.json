@@ -1,0 +1,5 @@
+{
+  "user_id": "${user_id}",
+  "shift_template_id": "${shift_template_id}",
+  "date": "${date}"
+}

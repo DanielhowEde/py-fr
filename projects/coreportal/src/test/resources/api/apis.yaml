@@ -9,3 +9,23 @@ envs:
       defaultHeaders:
         Accept: application/json
         Content-Type: application/json
+
+    Scheduling:
+      baseUrl: http://18.134.7.166/api/v1
+      auth:
+        type: api_key
+        header: Authorization
+        value: Bearer ${COREPORTAL_API_TOKEN}
+      defaultHeaders:
+        Accept: application/json
+        Content-Type: application/json
+
+    Leave:
+      baseUrl: http://18.134.7.166/api/v1
+      auth:
+        type: api_key
+        header: Authorization
+        value: Bearer ${COREPORTAL_API_TOKEN}
+      defaultHeaders:
+        Accept: application/json
+        Content-Type: application/json

@@ -1,0 +1,10 @@
+{
+  "name": "${name}",
+  "start_time": "${start_time}",
+  "end_time": "${end_time}",
+  "crosses_midnight": ${{crosses_midnight}},
+  "break_duration_minutes": ${break_minutes:0},
+  "break_is_paid": ${{break_paid}},
+  "colour_key": "${colour_key:shift-default}",
+  "is_active": true
+}
